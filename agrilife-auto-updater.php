@@ -3,7 +3,7 @@
  * Plugin Name: AgriLife Auto Updater
  * Plugin URI: https://github.com/AgriLife/agrilife-auto-updater
  * Description: Handle automatic plugin updates
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Zach Watkins
  * Author URI: http://github.com/ZachWatkins
  * Author Email: zachary.watkins@ag.tamu.edu
@@ -71,9 +71,7 @@ class Agrilife_AutoLoad {
 			'google-maps-builder'
 		);
 
-		if(!get_site_transient('agrilife_auto_updater_triggered')){
-			set_site_transient('agrilife_auto_updater_triggered', date('l jS \of F Y h:i:s A'));
-		}
+		set_site_transient('agrilife_auto_updater_triggered', date('l jS \of F Y h:i:s A'));
 
 		if ( in_array( $item->slug, $plugins ) ) {
 			$transient_name = 'agrilife_auto_updater_false';
@@ -85,11 +83,8 @@ class Agrilife_AutoLoad {
 
 		$transient = get_site_transient($transient_name);
 
-		$transient_value = $transient ? $transient : '';
-		if(!empty($transient)){
-			$transient_value .= ',';
-		}
-		$transient_value .= $item->slug . ' (' . date('l jS \of F Y h:i:s A') . ')';
+		$transient_value = $transient ? $transient : array();
+		$transient_value[ $item->slug ] = '(' . date('l jS \of F Y h:i:s A') . ')';
 
 		set_site_transient($transient_name, $transient_value);
 		return $return_value;

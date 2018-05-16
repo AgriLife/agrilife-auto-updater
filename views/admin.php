@@ -7,7 +7,7 @@
 			echo 'Auto update action triggered on ' . get_site_transient('agrilife_auto_updater_triggered');
 			?><br><p>Plugins which have updated automatically: <?php
 				$transient1 = get_site_transient('agrilife_auto_updater_true');
-				if($transient1){
+				if($transient1 && gettype($transient1) != 'string'){
 					echo '<ol>';
 					foreach ($transient1 as $key => $value) {
 						echo '<li>' . $key . ': ' . $value . '</li>';
@@ -19,7 +19,7 @@
 			?></p>
 			<p>Plugins which were skipped over during auto-update: <?php
 				$transient2 = get_site_transient('agrilife_auto_updater_false');
-				if($transient2){
+				if($transient2 && gettype($transient2) != 'string'){
 					echo '<ol>';
 					foreach ($transient2 as $key => $value) {
 						echo '<li>' . $key . ': ' . $value . '</li>';

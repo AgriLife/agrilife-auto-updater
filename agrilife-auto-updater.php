@@ -83,10 +83,13 @@ class Agrilife_AutoLoad {
 
 		$transient = get_site_transient($transient_name);
 
-		$transient_value = $transient ? $transient : array();
-		$transient_value[ $item->slug ] = '(' . date('l jS \of F Y h:i:s A') . ')';
+		if(!$transient || gettype($transient) == 'string'){
+			$transient = array();
+		}
 
-		set_site_transient($transient_name, $transient_value);
+		$transient[ $item->slug ] = '(' . date('l jS \of F Y h:i:s A') . ')';
+
+		set_site_transient($transient_name, $transient);
 		return $return_value;
 
 	}

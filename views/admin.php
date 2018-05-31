@@ -3,10 +3,12 @@
 	<?php screen_icon(); ?>
 	<h2><?php _e( 'Auto Updates', 'agriflex' ); ?></h2><?php
 		global $wp_filter;
+		echo '<h2>$wp_filter[\'wp_update_plugins\'];</h2>';
 		echo '<pre>';
 		print_r($wp_filter['wp_update_plugins']);
 		echo '</pre>';
-		echo '<h2>Results of _get_cron_array();</h2><pre>'; print_r( _get_cron_array() ); echo '</pre>';
+		echo '<h2>_get_cron_array();</h2>';
+		echo '<pre>'; print_r( _get_cron_array() ); echo '</pre>';
 
 		if(get_site_transient('agrilife_auto_updater_triggered')){
 

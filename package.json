@@ -1,0 +1,31 @@
+{
+  "name": "agrilife-auto-updater",
+  "version": "1.0.0",
+  "description": "Automate some plugin updates based on list",
+  "main": "agrilife-auto-updater.php",
+  "devDependencies": {
+    "grunt": "~0.4.0"
+  },
+  "engines": {
+    "node": "4.0.0"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AgriLife/agrilife-auto-updater.git"
+  },
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "update"
+  ],
+  "author": "Zachary Watkins",
+  "license": "GPL-2.0+",
+  "bugs": {
+    "url": "https://github.com/AgriLife/agrilife-auto-updater/issues"
+  },
+  "homepage": "https://github.com/AgriLife/agrilife-auto-updater#readme"
+}

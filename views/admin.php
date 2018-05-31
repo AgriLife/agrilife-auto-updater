@@ -12,13 +12,13 @@
 
 		if(get_site_transient('agrilife_auto_updater_triggered')){
 
-			echo '<p>Auto update action triggered on ' . get_site_transient('agrilife_auto_updater_triggered') . '</p>';
+			echo '<p>Auto update action last triggered on ' . get_site_transient('agrilife_auto_updater_triggered') . '</p>';
 
 			$transient1 = get_site_transient('agrilife_auto_updater_true');
 
 			if($transient1 && gettype($transient1) != 'string'){
 
-				echo '<p>The following plugins have updated automatically: <ol>';
+				echo '<p>Plugins which were updated automatically: <ol>';
 
 				foreach ($transient1 as $key => $value) {
 					echo '<li>' . $key . ': ' . $value . '</li>';
@@ -28,7 +28,7 @@
 
 			} else {
 
-				?><p>Transient "agrilife_auto_updater_true" not set, which means one of the following:<ol><li>the action has not executed</li><li>no plugins were updated during the action</li><li>the action has not run since this plugin was updated to use arrays instead of strings for storing update timestamps</li></ol>.</p><?php
+				?><p>Transient "agrilife_auto_updater_true" not set, which means one of the following:<ol><li>no plugins were updated during the action</li><li>the action has not run since this plugin was updated to use arrays instead of strings for storing update timestamps</li></ol>.</p><?php
 
 			}
 
@@ -36,7 +36,7 @@
 
 			if($transient2 && gettype($transient2) != 'string'){
 
-				?><p>Plugins which were skipped over during auto-update: <ol><?php
+				?><p>Plugins which were skipped over during the update action: <ol><?php
 
 				foreach ($transient2 as $key => $value) {
 					echo '<li>' . $key . ': ' . $value . '</li>';
@@ -46,7 +46,7 @@
 
 			} else {
 
-				?><p>Transient "agrilife_auto_updater_false" not set, which means one of the following:<ol><li>the action has not executed</li><li>no plugins were skipped during the action</li><li>the action has not run since this plugin was updated to use arrays instead of strings for storing update timestamps</li></ol></p><?php
+				?><p>Transient "agrilife_auto_updater_false" not set, which means one of the following:<ol><li>no plugins were skipped during the action</li><li>the action has not run since this plugin was updated to use arrays instead of strings for storing update timestamps</li></ol></p><?php
 
 			}
 

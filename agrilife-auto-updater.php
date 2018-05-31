@@ -44,7 +44,11 @@ class Agrilife_AutoLoad {
 		$this->path = plugin_dir_path( __FILE__ );
 
 		// Add the options page and menu item
-	  add_action( 'network_admin_menu', array( $this, 'plugin_admin_menu' ) );
+		if( is_multisite() ){
+	  	add_action( 'network_admin_menu', array( $this, 'plugin_network_admin_menu' ) );
+		} else {
+			add_action( 'admin_menu', array( $this, 'plugin_admin_menu' ) );
+		}
 
 		add_filter( 'auto_update_plugin', array( $this, 'auto_update_specific_plugins' ), 10, 2 );
 
@@ -94,6 +98,22 @@ class Agrilife_AutoLoad {
 
 	}
 
+	public function plugin_network_admin_menu() {
+
+		require( 'vendor/Settings.php' );
+
+		$this->wpsf = new Settings( $this->path . 'lib/plugin-settings.php' );
+
+		add_submenu_page(
+			'plugins.php',
+			'Auto Updates',
+			'Auto Updates',
+			'manage_network',
+			'auto-updates',
+			array( $this, 'plugin_admin_page' )
+		);
+
+	}
 
 	public function plugin_admin_menu() {
 
@@ -105,7 +125,7 @@ class Agrilife_AutoLoad {
 			'plugins.php',
 			'Auto Updates',
 			'Auto Updates',
-			'manage_network',
+			'manage_options',
 			'auto-updates',
 			array( $this, 'plugin_admin_page' )
 		);

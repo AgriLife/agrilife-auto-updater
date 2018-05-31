@@ -1,38 +1,57 @@
 <div class="wrap">
 
 	<?php screen_icon(); ?>
-	<h2><?php _e( 'Auto Updates', 'agriflex' ); ?></h2>
-	<p><?php
+	<h2><?php _e( 'Auto Updates', 'agriflex' ); ?></h2><?php
+		global $wp_filter;
+		echo '<pre>';
+		print_r($wp_filter['wp_update_plugins']);
+		echo '</pre>';
+		echo '<h2>Results of _get_cron_array();</h2><pre>'; print_r( _get_cron_array() ); echo '</pre>';
+
 		if(get_site_transient('agrilife_auto_updater_triggered')){
-			echo 'Auto update action triggered on ' . get_site_transient('agrilife_auto_updater_triggered');
-			?><br><p>Plugins which have updated automatically: <?php
-				$transient1 = get_site_transient('agrilife_auto_updater_true');
-				if($transient1 && gettype($transient1) != 'string'){
-					echo '<ol>';
-					foreach ($transient1 as $key => $value) {
-						echo '<li>' . $key . ': ' . $value . '</li>';
-					}
-					echo '</ol>';
-				} else {
-					echo '<li>Transient "agrilife_auto_updater_true" not set, which means the action has not executed or no plugins were updated.</li>';
+
+			echo '<p>Auto update action triggered on ' . get_site_transient('agrilife_auto_updater_triggered') . '</p>';
+
+			$transient1 = get_site_transient('agrilife_auto_updater_true');
+
+			if($transient1 && gettype($transient1) != 'string'){
+
+				echo '<p>The following plugins have updated automatically: <ol>';
+
+				foreach ($transient1 as $key => $value) {
+					echo '<li>' . $key . ': ' . $value . '</li>';
 				}
-			?></p>
-			<p>Plugins which were skipped over during auto-update: <?php
-				$transient2 = get_site_transient('agrilife_auto_updater_false');
-				if($transient2 && gettype($transient2) != 'string'){
-					echo '<ol>';
-					foreach ($transient2 as $key => $value) {
-						echo '<li>' . $key . ': ' . $value . '</li>';
-					}
-					echo '</ol>';
-				} else {
-					echo 'Transient "agrilife_auto_updater_false" not set, which means the action has not executed or no plugins were skipped over during the update.';
+
+				echo '</ol></p>';
+
+			} else {
+
+				?><p>Transient "agrilife_auto_updater_true" not set, which means one of the following:<ol><li>the action has not executed</li><li>no plugins were updated during the action</li><li>the action has not run since this plugin was updated to use arrays instead of strings for storing update timestamps</li></ol>.</p><?php
+
+			}
+
+			$transient2 = get_site_transient('agrilife_auto_updater_false');
+
+			if($transient2 && gettype($transient2) != 'string'){
+
+				?><p>Plugins which were skipped over during auto-update: <ol><?php
+
+				foreach ($transient2 as $key => $value) {
+					echo '<li>' . $key . ': ' . $value . '</li>';
 				}
-			?></p><?php
+
+				?></ol></p><?php
+
+			} else {
+
+				?><p>Transient "agrilife_auto_updater_false" not set, which means one of the following:<ol><li>the action has not executed</li><li>no plugins were skipped during the action</li><li>the action has not run since this plugin was updated to use arrays instead of strings for storing update timestamps</li></ol></p><?php
+
+			}
+
 		} else {
-			echo 'Auto update has not yet triggered.';
+			?><p>Auto update has not yet triggered.</p><?php
 		}
-	?></p>
+	?>
 	<p>All plugins not on this list will update automatically every 12 hours or so.<br>
 		<ol>
 			<?php

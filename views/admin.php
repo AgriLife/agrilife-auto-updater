@@ -73,14 +73,4 @@
 			?>
 		</ol>
 	</p>
-
-<?php
-	global $wp_filter;
-	echo '<h2>$wp_filter[\'wp_update_plugins\'];</h2>';
-	echo '<pre>';
-	print_r($wp_filter['wp_update_plugins']);
-	echo '</pre>';
-	echo '<h2>_get_cron_array();</h2>';
-	echo '<pre>'; print_r( _get_cron_array() ); echo '</pre>'
-?>
 </div><!-- .wrap -->

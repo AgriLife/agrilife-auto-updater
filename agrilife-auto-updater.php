@@ -50,7 +50,10 @@ class Agrilife_AutoLoad {
 			add_action( 'admin_menu', array( $this, 'plugin_admin_menu' ) );
 		}
 
-		add_filter( 'auto_update_plugin', array( $this, 'auto_update_specific_plugins' ), 10, 2 );
+		// Wrap in action like gravityforms.php
+		add_action( 'init', function(){
+			add_filter( 'auto_update_plugin', array( $this, 'auto_update_specific_plugins' ), 10, 2 );
+		});
 
 	}
 
@@ -78,12 +81,20 @@ class Agrilife_AutoLoad {
 		set_site_transient('agrilife_auto_updater_triggered', date('l jS \of F Y h:i:s A'));
 
 		if ( in_array( $item->slug, $plugins ) ) {
-			$transient_name = 'agrilife_auto_updater_false';
-			$return_value = false;
+
+			$this->set_plugin_update_time( 'agrilife_auto_updater_false', $item->slug );
+			return false;
+
 		} else {
-			$transient_name = 'agrilife_auto_updater_true';
-			$return_value = true;
+
+			$this->set_plugin_update_time( 'agrilife_auto_updater_true', $item->slug );
+			return true;
+
 		}
+
+	}
+
+	public function set_plugin_update_time($transient_name, $item_name){
 
 		$transient = get_site_transient($transient_name);
 
@@ -91,10 +102,9 @@ class Agrilife_AutoLoad {
 			$transient = array();
 		}
 
-		$transient[ $item->slug ] = '(' . date('l jS \of F Y h:i:s A') . ')';
+		$transient[ $item_name ] = '(' . date('l jS \of F Y h:i:s A') . ')';
 
 		set_site_transient($transient_name, $transient);
-		return $return_value;
 
 	}
 

@@ -73,4 +73,14 @@
 			?>
 		</ol>
 	</p>
+	<?php
+		$aau_should_update = get_site_transient('agrilife_auto_updater_should_update');
+		$aau_update_result = get_site_transient('agrilife_auto_updater_update_result');
+		echo '<h2>Results of Should Update Function:</h2><pre>';
+		print_r($aau_should_update);
+		echo '</pre>';
+		echo '<h2>Results of Update Function:</h2><pre>';
+		print_r($aau_update_result);
+		echo '</pre>';
+	?>
 </div><!-- .wrap -->

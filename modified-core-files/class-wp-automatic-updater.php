@@ -175,7 +175,7 @@ class WP_Automatic_Updater {
 		$update = apply_filters( "auto_update_{$type}", $update, $item );
 
 		//start zw
-		if(strpos($type, 'plugin')){
+		if( 'plugin' == $type ){
 			$zwarr = get_site_transient('agrilife_auto_updater_should_update');
 			$zwarr['item on' . date('l jS \of F Y h:i:s A')] = $item;
 			$zwarr['update on' . date('l jS \of F Y h:i:s A')] = $update;
@@ -185,7 +185,7 @@ class WP_Automatic_Updater {
 		if ( ! $update ) {
 			if ( 'core' == $type )
 				$this->send_core_update_notification_email( $item );
-			if(strpos($type, 'plugin')){
+			if( 'plugin' == $type ){
 				$zwarr['return on' . date('l jS \of F Y h:i:s A')] = 'false';
 				set_site_transient('agrilife_auto_updater_should_update', $zwarr);
 			}
@@ -206,7 +206,7 @@ class WP_Automatic_Updater {
 				return false;
 		}
 
-		if(strpos($type, 'plugin')){
+		if( 'plugin' == $type ){
 			$zwarr['return on' . date('l jS \of F Y h:i:s A')] = 'true';
 			set_site_transient('agrilife_auto_updater_should_update', $zwarr);
 		}
@@ -268,7 +268,9 @@ class WP_Automatic_Updater {
 	 */
 	public function update( $type, $item ) {
 		$skin = new Automatic_Upgrader_Skin;
-		$zwarr = get_site_transient('agrilife_auto_updater_update_result');
+		if( 'plugin' == $type ){
+			$zwarr = get_site_transient('agrilife_auto_updater_update_result');
+		}
 		switch ( $type ) {
 			case 'core':
 				// The Core upgrader doesn't use the Upgrader's skin during the actual main part of the upgrade, instead, firing a filter.
@@ -292,8 +294,10 @@ class WP_Automatic_Updater {
 
 		// Determine whether we can and should perform this update.
 		if ( ! $this->should_update( $type, $item, $context ) ){
-			$zwarr[date('l jS \of F Y h:i:s A')] = 'false';
-			set_site_transient('agrilife_auto_updater_update_result', $zwarr);
+			if( 'plugin' == $type ){
+				$zwarr[date('l jS \of F Y h:i:s A')] = 'false';
+				set_site_transient('agrilife_auto_updater_update_result', $zwarr);
+			}
 			return false;
 		}
 
@@ -376,8 +380,10 @@ class WP_Automatic_Updater {
 			'messages' => $skin->get_upgrade_messages()
 		);
 
-		$zwarr[date('l jS \of F Y h:i:s A')] = $upgrade_result;
-		set_site_transient('agrilife_auto_updater_update_result', $zwarr);
+		if( 'plugin' == $type ){
+			$zwarr[date('l jS \of F Y h:i:s A')] = $upgrade_result;
+			set_site_transient('agrilife_auto_updater_update_result', $zwarr);
+		}
 
 		return $upgrade_result;
 	}

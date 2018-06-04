@@ -11,7 +11,7 @@
 
 			if($transient1 && gettype($transient1) != 'string'){
 
-				echo '<p>Plugins which were updated automatically: <ol>';
+				echo '<p>Plugins which were included during the update action: <ol>';
 
 				foreach ($transient1 as $key => $value) {
 					echo '<li>' . $key . ': ' . $value . '</li>';

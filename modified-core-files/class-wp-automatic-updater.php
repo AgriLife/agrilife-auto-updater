@@ -1,5 +1,6 @@
 <?php
 /**
+ * wordpress-default/wp-admin/includes/class-wp-automatic-updater.php
  * Upgrade API: WP_Automatic_Updater class
  *
  * @package WordPress
@@ -128,6 +129,11 @@ class WP_Automatic_Updater {
 	 *                        access and status should be checked.
 	 */
 	public function should_update( $type, $item, $context ) {
+
+		$zwarr = get_site_transient('agrilife_auto_updater_should_update');
+		$zwarr[date('l jS \of F Y h:i:s A') . ' ' . $type . ' should_update'] = 'true';
+		$zwarr[date('l jS \of F Y h:i:s A') . ' item'] = $item;
+
 		// Used to see if WP_Filesystem is set up to allow unattended updates.
 		$skin = new Automatic_Upgrader_Skin;
 
@@ -172,23 +178,19 @@ class WP_Automatic_Updater {
 		 * @param bool   $update Whether to update.
 		 * @param object $item   The update offer.
 		 */
+		$zwarr[date('l jS \of F Y h:i:s A') . ' update before filters'] = $update;
+
 		$update = apply_filters( "auto_update_{$type}", $update, $item );
 
-		//start zw
-		if( 'plugin' == $type ){
-			$zwarr = get_site_transient('agrilife_auto_updater_should_update');
-			$zwarr['item on' . date('l jS \of F Y h:i:s A')] = $item;
-			$zwarr['update on' . date('l jS \of F Y h:i:s A')] = $update;
-		}
-		//end zw
+		$zwarr[date('l jS \of F Y h:i:s A') . ' update after filters'] = $update;
 
 		if ( ! $update ) {
 			if ( 'core' == $type )
 				$this->send_core_update_notification_email( $item );
 			if( 'plugin' == $type ){
-				$zwarr['return on' . date('l jS \of F Y h:i:s A')] = 'false';
-				set_site_transient('agrilife_auto_updater_should_update', $zwarr);
+				$zwarr['return on ' . date('l jS \of F Y h:i:s A')] = 'false';
 			}
+			set_site_transient('agrilife_auto_updater_should_update', $zwarr);
 			return false;
 		}
 
@@ -202,14 +204,14 @@ class WP_Automatic_Updater {
 			else
 				$mysql_compat = version_compare( $wpdb->db_version(), $item->mysql_version, '>=' );
 
-			if ( ! $php_compat || ! $mysql_compat )
+			if ( ! $php_compat || ! $mysql_compat ){
+				set_site_transient('agrilife_auto_updater_should_update', $zwarr);
 				return false;
+			}
 		}
 
-		if( 'plugin' == $type ){
-			$zwarr['return on' . date('l jS \of F Y h:i:s A')] = 'true';
-			set_site_transient('agrilife_auto_updater_should_update', $zwarr);
-		}
+		$zwarr['return on' . date('l jS \of F Y h:i:s A')] = 'true';
+		set_site_transient('agrilife_auto_updater_should_update', $zwarr);
 		return true;
 	}
 
@@ -268,9 +270,9 @@ class WP_Automatic_Updater {
 	 */
 	public function update( $type, $item ) {
 		$skin = new Automatic_Upgrader_Skin;
-		if( 'plugin' == $type ){
-			$zwarr = get_site_transient('agrilife_auto_updater_update_result');
-		}
+
+		$zwarr = get_site_transient('agrilife_auto_updater_update_result');
+
 		switch ( $type ) {
 			case 'core':
 				// The Core upgrader doesn't use the Upgrader's skin during the actual main part of the upgrade, instead, firing a filter.
@@ -382,8 +384,11 @@ class WP_Automatic_Updater {
 
 		if( 'plugin' == $type ){
 			$zwarr[date('l jS \of F Y h:i:s A')] = $upgrade_result;
-			set_site_transient('agrilife_auto_updater_update_result', $zwarr);
 		}
+
+		$zwarr['item on ' . date('l jS \of F Y h:i:s A')] = $item;
+
+		set_site_transient('agrilife_auto_updater_update_result', $zwarr);
 
 		return $upgrade_result;
 	}
@@ -412,13 +417,21 @@ class WP_Automatic_Updater {
 		// Next, Plugins
 		wp_update_plugins(); // Check for Plugin updates
 		$plugin_updates = get_site_transient( 'update_plugins' );
+
+		$zwarr = get_site_transient('agrilife_auto_updater_events');
+		$zwarr['get_site_transient(update_plugins) on ' . date('l jS \of F Y h:i:s A')] = $plugin_updates;
+
 		if ( $plugin_updates && !empty( $plugin_updates->response ) ) {
-			foreach ( $plugin_updates->response as $plugin ) {
+			$zwarr['if plugin_updates and response not empty'] = 'true';
+			foreach ( $plugin_updates->response as $key => $plugin ) {
+				$zwarr[$key] = 'true';
 				$this->update( 'plugin', $plugin );
+				$zwarr['WP_Automatic_Updater->update() for ' . $plugin['id'] . ' on ' . date('l jS \of F Y h:i:s A')] = 'true';
 			}
 			// Force refresh of plugin update information
 			wp_clean_plugins_cache();
 		}
+		set_site_transient('agrilife_auto_updater_events', $zwarr);
 
 		// Next, those themes we all love
 		wp_update_themes();  // Check for Theme updates

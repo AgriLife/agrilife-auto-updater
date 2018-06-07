@@ -358,6 +358,10 @@ function wp_update_plugins( $extra_stats = array() ) {
 	}
 
 	set_site_transient( 'update_plugins', $new_option );
+
+	$zwarr = get_site_transient('agrilife_auto_updater_events');
+	$zwarr['wp_update_plugins ' . date('l jS \of F Y h:i:s A')] = $new_option;
+	set_site_transient('agrilife_auto_updater_events', $zwarr);
 }
 
 /**
@@ -625,6 +629,9 @@ function wp_get_update_data() {
 	 * }
 	 * @param array $titles An array of update counts and UI strings for available updates.
 	 */
+	$zwarr = get_site_transient('agrilife_auto_updater_events');
+	$zwarr['wp_get_update_data ' . date('l jS \of F Y h:i:s A')] = apply_filters( 'wp_get_update_data', $update_data, $titles );
+	set_site_transient('agrilife_auto_updater_events', $zwarr);
 	return apply_filters( 'wp_get_update_data', $update_data, $titles );
 }
 

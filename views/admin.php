@@ -21,7 +21,7 @@
 
 			} else {
 
-				?><p>Transient "agrilife_auto_updater_true" not set, which means one of the following:<ol><li>no plugins were updated during the action</li><li>the action has not run since this plugin was updated to use arrays instead of strings for storing update timestamps</li></ol>.</p><?php
+				?><p>Transient "agrilife_auto_updater_true" = <?php print_r($transient1); ?>.</p><?php
 
 			}
 
@@ -39,7 +39,7 @@
 
 			} else {
 
-				?><p>Transient "agrilife_auto_updater_false" not set, which means one of the following:<ol><li>no plugins were skipped during the action</li><li>the action has not run since this plugin was updated to use arrays instead of strings for storing update timestamps</li></ol></p><?php
+				?><p>Transient "agrilife_auto_updater_false" = <pre><?php print_r($transient2); ?></pre>.</p><?php
 
 			}
 
@@ -74,9 +74,13 @@
 		</ol>
 	</p>
 	<?php
+		$aau_checked = get_site_transient('agrilife_auto_updater_checked');
 		$aau_update_events = get_site_transient('agrilife_auto_updater_events');
 		$aau_should_update = get_site_transient('agrilife_auto_updater_should_update');
 		$aau_update_result = get_site_transient('agrilife_auto_updater_update_result');
+		echo '<h2>Checked for Update:</h2><pre>';
+		print_r($aau_checked);
+		echo '</pre>';
 		echo '<h2>Update Events:</h2><pre>';
 		print_r($aau_update_events);
 		echo '</pre>';

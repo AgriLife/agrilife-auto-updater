@@ -21,7 +21,7 @@
 
 			} else {
 
-				?><p>No plugins skipped over.</p><?php
+				?><p>No plugins updated.</p><?php
 
 			}
 
@@ -39,7 +39,7 @@
 
 			} else {
 
-				?><p>Transient "agrilife_auto_updater_false" = <pre><?php print_r($transient2); ?></pre>.</p><?php
+				?><p>No plugins skipped over.</p><?php
 
 			}
 

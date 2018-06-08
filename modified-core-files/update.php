@@ -642,9 +642,7 @@ function wp_get_update_data() {
 	 * }
 	 * @param array $titles An array of update counts and UI strings for available updates.
 	 */
-	$zwarr = get_site_transient('agrilife_auto_updater_events');
-	$zwarr['wp_get_update_data ' . date('l jS \of F Y h:i:s A')] = apply_filters( 'wp_get_update_data', $update_data, $titles );
-	set_site_transient('agrilife_auto_updater_events', $zwarr);
+
 	return apply_filters( 'wp_get_update_data', $update_data, $titles );
 }
 

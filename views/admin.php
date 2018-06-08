@@ -21,7 +21,7 @@
 
 			} else {
 
-				?><p>Transient "agrilife_auto_updater_true" = <?php print_r($transient1); ?>.</p><?php
+				?><p>No plugins skipped over.</p><?php
 
 			}
 

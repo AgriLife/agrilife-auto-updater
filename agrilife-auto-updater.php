@@ -52,6 +52,11 @@ class Agrilife_AutoLoad {
 
 		// Wrap in action like gravityforms.php
 		add_action( 'init', function(){
+			// set_site_transient('agrilife_auto_updater_checked', array());
+			// set_site_transient('agrilife_auto_updater_events', array());
+			// set_site_transient('agrilife_auto_updater_should_update', array());
+			// set_site_transient('agrilife_auto_updater_update_result', array());
+
 			if(!get_site_transient('agrilife_auto_updater_events')){
 				set_site_transient('agrilife_auto_updater_events', array());
 			}

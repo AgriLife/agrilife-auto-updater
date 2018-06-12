@@ -130,20 +130,23 @@ class WP_Automatic_Updater {
 	 */
 	public function should_update( $type, $item, $context ) {
 
+		$zwitemname = $item->slug ? $item->slug : 'no slug';
+		$zwprefix = date('l jS \of F Y h:i:s A') . $zwitemname . ' ';
+
 		$zwarr1 = get_site_transient('agrilife_auto_updater_should_update');
 		$zwarr2 = get_site_transient('agrilife_auto_updater_events');
 
-		$zwarr1[date('l jS \of F Y h:i:s A') . ' ' . $type . ' should_update'] = 'true';
-		$zwarr1[date('l jS \of F Y h:i:s A') . ' item'] = $item;
+		$zwarr1[$zwprefix . $type . ' should_update'] = 'true';
+		$zwarr1[$zwprefix . ' item'] = $item;
 
 		// Used to see if WP_Filesystem is set up to allow unattended updates.
 		$skin = new Automatic_Upgrader_Skin;
 
 		if ( $this->is_disabled() ){
-			$zwarr1[date('l jS \of F Y h:i:s A') . ' return value for should_update'] = 'false';
+			$zwarr1[$zwprefix . ' return value for should_update'] = 'false';
 			set_site_transient('agrilife_auto_updater_should_update', $zwarr1);
 
-			$zwarr2['should_update ' . date('l jS \of F Y h:i:s A')] = 'false';
+			$zwarr2[$zwprefix . 'should_update'] = 'false';
 			set_site_transient('agrilife_auto_updater_events', $zwarr2);
 			return false;
 		}
@@ -158,10 +161,10 @@ class WP_Automatic_Updater {
 		if ( ! $skin->request_filesystem_credentials( false, $context, $allow_relaxed_file_ownership ) || $this->is_vcs_checkout( $context ) ) {
 			if ( 'core' == $type )
 				$this->send_core_update_notification_email( $item );
-			$zwarr1[date('l jS \of F Y h:i:s A') . ' return value for should_update'] = 'false';
+			$zwarr1[$zwprefix . ' return value for should_update'] = 'false';
 			set_site_transient('agrilife_auto_updater_should_update', $zwarr1);
 
-			$zwarr2['should_update ' . date('l jS \of F Y h:i:s A')] = 'false';
+			$zwarr2[$zwprefix . 'should_update'] = 'false';
 			set_site_transient('agrilife_auto_updater_events', $zwarr2);
 			return false;
 		}
@@ -191,20 +194,20 @@ class WP_Automatic_Updater {
 		 * @param bool   $update Whether to update.
 		 * @param object $item   The update offer.
 		 */
-		$zwarr1[date('l jS \of F Y h:i:s A') . ' update before filters'] = ($update) ? 'true' : 'false';
+		$zwarr1[$zwprefix . ' update before filters'] = ($update) ? 'true' : 'false';
 
 		$update = apply_filters( "auto_update_{$type}", $update, $item );
 
-		$zwarr1[date('l jS \of F Y h:i:s A') . ' update after filters'] = ($update) ? 'true' : 'false';
+		$zwarr1[$zwprefix . ' update after filters'] = ($update) ? 'true' : 'false';
 
 		if ( ! $update ) {
 			if ( 'core' == $type )
 				$this->send_core_update_notification_email( $item );
 
-			$zwarr1[date('l jS \of F Y h:i:s A') . ' return value for should_update'] = 'false';
+			$zwarr1[$zwprefix . ' return value for should_update'] = 'false';
 			set_site_transient('agrilife_auto_updater_should_update', $zwarr1);
 
-			$zwarr2['should_update ' . date('l jS \of F Y h:i:s A')] = 'false';
+			$zwarr2[$zwprefix . 'should_update'] = 'false';
 			set_site_transient('agrilife_auto_updater_events', $zwarr2);
 
 			return false;
@@ -221,19 +224,19 @@ class WP_Automatic_Updater {
 				$mysql_compat = version_compare( $wpdb->db_version(), $item->mysql_version, '>=' );
 
 			if ( ! $php_compat || ! $mysql_compat ){
-				$zwarr1[date('l jS \of F Y h:i:s A') . ' return value for should_update'] = 'false';
+				$zwarr1[$zwprefix . 'return value for should_update'] = 'false';
 				set_site_transient('agrilife_auto_updater_should_update', $zwarr1);
 
-				$zwarr2['should_update ' . date('l jS \of F Y h:i:s A')] = 'false';
+				$zwarr2[$zwprefix . 'should_update'] = 'false';
 				set_site_transient('agrilife_auto_updater_events', $zwarr2);
 				return false;
 			}
 		}
 
-		$zwarr1[date('l jS \of F Y h:i:s A') . ' return value for should_update'] = 'true';
+		$zwarr1[$zwprefix . 'return value for should_update'] = 'true';
 		set_site_transient('agrilife_auto_updater_should_update', $zwarr1);
 
-		$zwarr2['should_update ' . date('l jS \of F Y h:i:s A')] = 'true';
+		$zwarr2[$zwprefix . 'should_update'] = 'true';
 		set_site_transient('agrilife_auto_updater_events', $zwarr2);
 
 		return true;
@@ -294,13 +297,18 @@ class WP_Automatic_Updater {
 	 */
 	public function update( $type, $item ) {
 
+		$zwitemname = $item->slug ? $item->slug : 'no slug';
+		$zwprefix = date('l jS \of F Y h:i:s A') . ' ' . $zwitemname . ' ';
+
 		$zwarr1 = get_site_transient('agrilife_auto_updater_checked');
-		$zwarr1['run ' . date('l jS \of F Y h:i:s A')] = $item;
+		$zwarr2 = get_site_transient('agrilife_auto_updater_update_result');
+		$zwarr3 = get_site_transient('agrilife_auto_updater_events');
+
+		$zwarr1[$zwprefix . 'run'] = $item;
 		set_site_transient('agrilife_auto_updater_checked', $zwarr1);
 
 		$skin = new Automatic_Upgrader_Skin;
 
-		$zwarr2 = get_site_transient('agrilife_auto_updater_update_result');
 
 		switch ( $type ) {
 			case 'core':
@@ -325,10 +333,8 @@ class WP_Automatic_Updater {
 
 		// Determine whether we can and should perform this update.
 		if ( ! $this->should_update( $type, $item, $context ) ){
-			if( 'plugin' == $type ){
-				$zwarr2[date('l jS \of F Y h:i:s A')] = 'false';
-				set_site_transient('agrilife_auto_updater_update_result', $zwarr2);
-			}
+			$zwarr2[$zwprefix . 'this->should_update function returned'] = 'false';
+			set_site_transient('agrilife_auto_updater_update_result', $zwarr2);
 			return false;
 		}
 
@@ -412,14 +418,13 @@ class WP_Automatic_Updater {
 		);
 
 		if( 'plugin' == $type ){
-			$zwarr2[date('l jS \of F Y h:i:s A') . ' upgrade result'] = $upgrade_result;
+			$zwarr2[$zwprefix . 'upgrade result'] = $upgrade_result;
 		}
 
-		$zwarr2['item on ' . date('l jS \of F Y h:i:s A')] = $item;
+		$zwarr2[$zwprefix . '$item'] = $item;
 		set_site_transient('agrilife_auto_updater_update_result', $zwarr2);
 
-		$zwarr3 = get_site_transient('agrilife_auto_updater_events');
-		$zwarr3['update ' . date('l jS \of F Y h:i:s A')] = $upgrade_result;
+		$zwarr3[$zwprefix . 'update $upgrade_result'] = $upgrade_result;
 		set_site_transient('agrilife_auto_updater_events', $zwarr3);
 
 		return $upgrade_result;
@@ -431,6 +436,11 @@ class WP_Automatic_Updater {
 	 * @since 3.7.0
 	 */
 	public function run() {
+
+		$zwprefix = date('l jS \of F Y h:i:s A') . ' run() ';
+
+		$zwarr1 = get_site_transient('agrilife_auto_updater_events');
+
 		if ( $this->is_disabled() )
 			return;
 
@@ -450,15 +460,14 @@ class WP_Automatic_Updater {
 		wp_update_plugins(); // Check for Plugin updates
 		$plugin_updates = get_site_transient( 'update_plugins' );
 
-		$zwarr1 = get_site_transient('agrilife_auto_updater_events');
-		$zwarr1['get_site_transient(update_plugins) on ' . date('l jS \of F Y h:i:s A')] = $plugin_updates;
+		$zwarr1[$zwprefix . 'get_site_transient(update_plugins)'] = $plugin_updates;
 
 		if ( $plugin_updates && !empty( $plugin_updates->response ) ) {
-			$zwarr1['if plugin_updates and response not empty'] = 'true';
+			$zwarr1[$zwprefix . '$plugin_updates and $plugin_updates->response not empty'] = 'true';
 			foreach ( $plugin_updates->response as $key => $plugin ) {
-				$zwarr1[$key] = 'true';
+				$zwarr1[$zwprefix . $key] = 'true';
 				$this->update( 'plugin', $plugin );
-				$zwarr1['WP_Automatic_Updater->update() for ' . $plugin['id'] . ' on ' . date('l jS \of F Y h:i:s A')] = 'true';
+				$zwarr1[$zwprefix . 'WP_Automatic_Updater->update()'] = 'true';
 			}
 			// Force refresh of plugin update information
 			wp_clean_plugins_cache();
@@ -544,9 +553,8 @@ class WP_Automatic_Updater {
 			 */
 			do_action( 'automatic_updates_complete', $this->update_results );
 
-			$zwarr2 = get_site_transient('agrilife_auto_updater_events');
-			$zwarr2['run ' . date('l jS \of F Y h:i:s A')] = $this->update_results;
-			set_site_transient('agrilife_auto_updater_events', $zwarr2);
+			$zwarr1[$zwprefix . '$this->update_results'] = $this->update_results;
+			set_site_transient('agrilife_auto_updater_events', $zwarr1);
 		}
 
 		WP_Upgrader::release_lock( 'auto_updater' );

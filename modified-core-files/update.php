@@ -360,7 +360,7 @@ function wp_update_plugins( $extra_stats = array() ) {
 	set_site_transient( 'update_plugins', $new_option );
 
 	$zwarr = get_site_transient('agrilife_auto_updater_events');
-	$zwarr['wp_update_plugins ' . date('l jS \of F Y h:i:s A')] = $new_option;
+	$zwarr[date('l jS \of F Y h:i:s A') . ' wp_update_plugins'] = $new_option;
 	set_site_transient('agrilife_auto_updater_events', $zwarr);
 }
 
@@ -535,18 +535,17 @@ function wp_maybe_auto_update() {
 	$t1 = get_site_transient('agrilife_auto_updater_should_update');
 	$t2 = get_site_transient('agrilife_auto_updater_update_result');
 	$t3 = get_site_transient('agrilife_auto_updater_events');
+	$zwdate = date('l jS \of F Y h:i:s A');
 
-	$t1[date('l jS \of F Y h:i:s A') . ' new update event started'] = 'true';
-	$t2[date('l jS \of F Y h:i:s A') . ' new update event started'] = 'true';
-	$t3[date('l jS \of F Y h:i:s A') . ' new update event started'] = 'true';
+	$t1[$zwdate . ' new update event started'] = 'true';
+	$t2[$zwdate . ' new update event started'] = 'true';
+	$t3[$zwdate . ' new update event started'] = 'true';
 
 	set_site_transient('agrilife_auto_updater_should_update', $t1);
 	set_site_transient('agrilife_auto_updater_update_result', $t2);
-	set_site_transient('agrilife_auto_updater_events', $t3);
 
-	$zwarr = get_site_transient('agrilife_auto_updater_events');
-	$zwarr[date('l jS \of F Y h:i:s A') . ' wp_maybe_auto_update'] = 'true';
-	set_site_transient('agrilife_auto_updater_events', $zwarr);
+	$t3[$zwdate . ' wp_maybe_auto_update'] = 'true';
+	set_site_transient('agrilife_auto_updater_events', $t3);
 
 	include_once( ABSPATH . '/wp-admin/includes/admin.php' );
 	include_once( ABSPATH . '/wp-admin/includes/class-wp-upgrader.php' );

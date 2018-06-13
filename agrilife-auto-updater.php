@@ -52,12 +52,6 @@ class Agrilife_AutoLoad {
 
 		// Wrap in action like gravityforms.php
 		add_action( 'init', function(){
-			// Remove old troubleshooting data
-			delete_site_transient('agrilife_auto_updater_checked', array());
-			delete_site_transient('agrilife_auto_updater_events', array());
-			delete_site_transient('agrilife_auto_updater_should_update', array());
-			delete_site_transient('agrilife_auto_updater_update_result', array());
-			delete_site_transient('agrilife_auto_updater_false', array());
 
 			add_filter( 'auto_update_plugin', array( $this, 'auto_update_specific_plugins' ), 10, 2 );
 
@@ -65,6 +59,36 @@ class Agrilife_AutoLoad {
 
 		// Log plugin update timestamp after a successful update
 		add_action( 'automatic_updates_complete', array( $this, 'log_plugin_updates' ) );
+
+		// Temporary change of updated plugin array keys
+		// Remove tomorrow
+		add_action( 'wp_maybe_auto_update', function(){
+
+			// Get plugins
+			$plugins = get_plugins();
+
+			// Get transient
+			$transient = get_site_transient('agrilife_auto_updater_true');
+
+			foreach ($plugins as $main_file => $plugin) {
+
+				$slug = basename($main_file, '.php');
+				$name = $plugin['name'];
+
+				if(array_key_exists($slug, $transient)){
+
+					// Store value
+					$value = $transient[$slug];
+					// Unset old keyed values
+					unset($transient[$slug]);
+					// Set new keyed value
+					$transient[$name] = $value;
+
+				}
+
+			}
+
+		});
 
 	}
 
@@ -112,7 +136,7 @@ class Agrilife_AutoLoad {
 			if( property_exists($item, 'plugin') && $plugin->result){
 
 				// This is a plugin and it was updated
-				$this->set_plugin_update_time( 'agrilife_auto_updater_true', $item->slug );
+				$this->set_plugin_update_time( 'agrilife_auto_updater_true', $plugin );
 
 			}
 
@@ -120,15 +144,19 @@ class Agrilife_AutoLoad {
 
 	}
 
-	public function set_plugin_update_time($transient_name, $item_name){
+	public function set_plugin_update_time($transient_name, $plugin){
 
 		$transient = get_site_transient($transient_name);
 
-		if(!$transient || gettype($transient) == 'string'){
+		if(!$transient){
 			$transient = array();
 		}
 
-		$transient[ $item_name ] = '(' . date('l jS \of F Y h:i:s A') . ')';
+		// As plugins update, rename the array key to a name value
+		$item = $plugin->item;
+		$name = $plugin->name;
+
+		$transient[ $name ] = '(' . date('l jS \of F Y h:i:s A') . ')';
 
 		set_site_transient($transient_name, $transient);
 

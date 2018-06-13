@@ -110,6 +110,7 @@ class Agrilife_AutoLoad {
 			'remove-date-from-permalink',
 			'remove-workflow-states',
 			'wpGoogleMaps',
+			'wp-google-maps',
 			'wp-google-maps-gold',
 			'wp-google-maps-pro',
 			'google-maps-builder'

@@ -52,26 +52,25 @@ class Agrilife_AutoLoad {
 
 		// Wrap in action like gravityforms.php
 		add_action( 'init', function(){
-			// set_site_transient('agrilife_auto_updater_checked', array());
-			// set_site_transient('agrilife_auto_updater_events', array());
-			// set_site_transient('agrilife_auto_updater_should_update', array());
-			// set_site_transient('agrilife_auto_updater_update_result', array());
+			// Remove old troubleshooting data
+			delete_site_transient('agrilife_auto_updater_checked', array());
+			delete_site_transient('agrilife_auto_updater_events', array());
+			delete_site_transient('agrilife_auto_updater_should_update', array());
+			delete_site_transient('agrilife_auto_updater_update_result', array());
+			delete_site_transient('agrilife_auto_updater_false', array());
 
-			if(!get_site_transient('agrilife_auto_updater_events')){
-				set_site_transient('agrilife_auto_updater_events', array());
-			}
-			if(!get_site_transient('agrilife_auto_updater_should_update')){
-				set_site_transient('agrilife_auto_updater_should_update', array());
-			}
-			if(!get_site_transient('agrilife_auto_updater_update_result')){
-				set_site_transient('agrilife_auto_updater_update_result', array());
-			}
 			add_filter( 'auto_update_plugin', array( $this, 'auto_update_specific_plugins' ), 10, 2 );
+
 		});
+
+		// Log plugin update timestamp after a successful update
+		add_action( 'automatic_updates_complete', array( $this, 'log_plugin_updates' ) );
 
 	}
 
-	public function auto_update_specific_plugins ( $update, $item ) {
+	public function auto_update_specific_plugins( $update, $item ) {
+
+    set_site_transient('agrilife_auto_updater_triggered', date('l jS \of F Y h:i:s A'));
 
 		// Array of plugin slugs to never auto-update
 		$plugins = array (
@@ -92,17 +91,30 @@ class Agrilife_AutoLoad {
 			'google-maps-builder'
 		);
 
-		set_site_transient('agrilife_auto_updater_triggered', date('l jS \of F Y h:i:s A'));
-
 		if ( in_array( $item->slug, $plugins ) ) {
 
-			$this->set_plugin_update_time( 'agrilife_auto_updater_false', $item->slug );
 			return false;
 
 		} else {
 
-			$this->set_plugin_update_time( 'agrilife_auto_updater_true', $item->slug );
 			return true;
+
+		}
+
+	}
+
+	public function log_plugin_updates($update_results){
+
+		foreach ($update_results as $key => $plugin) {
+
+			$item = $plugin->item;
+
+			if( property_exists($item, 'plugin') && $plugin->result){
+
+				// This is a plugin and it was updated
+				$this->set_plugin_update_time( 'agrilife_auto_updater_true', $item->slug );
+
+			}
 
 		}
 

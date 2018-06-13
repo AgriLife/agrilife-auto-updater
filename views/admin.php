@@ -5,15 +5,13 @@
 
 		if(get_site_transient('agrilife_auto_updater_triggered')){
 
-			echo '<p>Auto update action last triggered on ' . get_site_transient('agrilife_auto_updater_triggered') . '</p>';
+			$transient = get_site_transient('agrilife_auto_updater_true');
 
-			$transient1 = get_site_transient('agrilife_auto_updater_true');
-
-			if($transient1 && gettype($transient1) != 'string'){
+			if($transient && gettype($transient) != 'string'){
 
 				echo '<p>Plugins which were included during the update action: <ol>';
 
-				foreach ($transient1 as $key => $value) {
+				foreach ($transient as $key => $value) {
 					echo '<li>' . $key . ': ' . $value . '</li>';
 				}
 
@@ -22,24 +20,6 @@
 			} else {
 
 				?><p>No plugins updated.</p><?php
-
-			}
-
-			$transient2 = get_site_transient('agrilife_auto_updater_false');
-
-			if($transient2 && gettype($transient2) != 'string'){
-
-				?><p>Plugins which were skipped over during the update action: <ol><?php
-
-				foreach ($transient2 as $key => $value) {
-					echo '<li>' . $key . ': ' . $value . '</li>';
-				}
-
-				?></ol></p><?php
-
-			} else {
-
-				?><p>No plugins skipped over.</p><?php
 
 			}
 
@@ -73,22 +53,4 @@
 			?>
 		</ol>
 	</p>
-	<?php
-		$aau_checked = get_site_transient('agrilife_auto_updater_checked');
-		$aau_update_events = get_site_transient('agrilife_auto_updater_events');
-		$aau_should_update = get_site_transient('agrilife_auto_updater_should_update');
-		$aau_update_result = get_site_transient('agrilife_auto_updater_update_result');
-		echo '<h2>Checked for Update:</h2><pre>';
-		print_r($aau_checked);
-		echo '</pre>';
-		echo '<h2>Update Events:</h2><pre>';
-		print_r($aau_update_events);
-		echo '</pre>';
-		echo '<h2>Results of Should Update Function:</h2><pre>';
-		print_r($aau_should_update);
-		echo '</pre>';
-		echo '<h2>Results of Update Function:</h2><pre>';
-		print_r($aau_update_result);
-		echo '</pre>';
-	?>
 </div><!-- .wrap -->

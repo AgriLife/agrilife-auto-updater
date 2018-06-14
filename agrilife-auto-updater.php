@@ -72,7 +72,7 @@ class Agrilife_AutoLoad {
 
 			foreach ($plugins as $main_file => $plugin) {
 
-				$slug = basename($main_file, '.php');
+				$slug = $plugin['TextDomain'];
 				$name = $plugin['name'];
 
 				if(array_key_exists($slug, $transient)){
@@ -157,7 +157,7 @@ class Agrilife_AutoLoad {
 		$item = $plugin->item;
 		$name = $plugin->name;
 
-		$transient[ $name ] = '(' . date('l jS \of F Y h:i:s A') . ')';
+		$transient[ $name ] = date('l jS \of F Y h:i:s A');
 
 		set_site_transient($transient_name, $transient);
 

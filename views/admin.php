@@ -11,10 +11,18 @@
 
 				echo '<p>The following plugins were automatically updated at the listed times: <ol>';
 
-				ksort($transient);
-
 				foreach ($transient as $key => $value) {
-					echo '<li>' . $key . ': ' . $value . '</li>';
+
+					if(gettype($value) == 'integer'){
+
+						echo '<li>' . $key . ': ' . date('l jS \of F Y h:i:s A', $value) . '</li>';
+
+					} else {
+
+						echo '<li>' . $key . ': ' . $value . '</li>';
+
+					}
+
 				}
 
 				echo '</ol></p>';

@@ -74,11 +74,18 @@ class Agrilife_AutoLoad {
 
 				$slug = $plugin['TextDomain'];
 				$name = $plugin['name'];
+				$pattern = '/\((Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday) (\d+)(st|nd|rd|th) of([^\)]+)\)/i';
+				$replace = '$2$4';
 
 				if(array_key_exists($slug, $transient)){
 
-					// Store value
+					// Set aside value
 					$value = $transient[$slug];
+					// Reverse value value back to milliseconds for sorting
+					if(gettype($value) !== 'integer'){
+						$value = preg_replace($pattern, $replace, $value);
+						$value = strtotime($value);
+					}
 					// Unset old keyed values
 					unset($transient[$slug]);
 					// Set new keyed value
@@ -87,6 +94,10 @@ class Agrilife_AutoLoad {
 				}
 
 			}
+
+			arsort($transient);
+
+			set_site_transient( 'agrilife_auto_updater_true', $transient );
 
 		});
 

@@ -9,7 +9,9 @@
 
 			if($transient){
 
-				echo '<p>The following plugins were automatically updated at the listed times: <ol>';
+				arsort($transient);
+
+				?><p>The following plugins were automatically updated at the listed times: <ol><?php
 
 				foreach ($transient as $key => $value) {
 
@@ -25,7 +27,7 @@
 
 				}
 
-				echo '</ol></p>';
+				?></ol></p><?php
 
 			} else {
 

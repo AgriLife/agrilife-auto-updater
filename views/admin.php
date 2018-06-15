@@ -7,7 +7,7 @@
 
 			$transient = get_site_transient('agrilife_auto_updater_true');
 
-			if($transient && gettype($transient) != 'string'){
+			if($transient){
 
 				echo '<p>The following plugins were automatically updated at the listed times: <ol>';
 

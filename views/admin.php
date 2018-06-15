@@ -64,4 +64,6 @@
 			?>
 		</ol>
 	</p>
+	<h2>Plugins returned in completion response</h2>
+	<pre><?php print_r(get_site_transient('agrilife_auto_updater_plugins'));?></pre>
 </div><!-- .wrap -->

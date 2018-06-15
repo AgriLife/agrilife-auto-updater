@@ -1,6 +1,6 @@
 {
   "name": "agrilife-auto-updater",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Automate some plugin updates based on list",
   "main": "agrilife-auto-updater.php",
   "devDependencies": {

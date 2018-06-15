@@ -43,6 +43,15 @@ class Agrilife_AutoLoad {
 		// Save the plugin path
 		$this->path = plugin_dir_path( __FILE__ );
 
+		// Declare transient
+		if( !get_site_transient('agrilife_auto_updater_true') ){
+			set_site_transient('agrilife_auto_updater_true', array());
+		}
+
+		if( !get_site_transient('agrilife_auto_updater_plugins') ){
+			set_site_transient('agrilife_auto_updater_plugins', array());
+		}
+
 		// Add the options page and menu item
 		if( is_multisite() ){
 	  	add_action( 'network_admin_menu', array( $this, 'plugin_network_admin_menu' ) );
@@ -50,56 +59,14 @@ class Agrilife_AutoLoad {
 			add_action( 'admin_menu', array( $this, 'plugin_admin_menu' ) );
 		}
 
-		// Wrap in action like gravityforms.php
 		add_action( 'init', function(){
 
 			add_filter( 'auto_update_plugin', array( $this, 'auto_update_specific_plugins' ), 10, 2 );
 
 		});
 
-		// Log plugin update timestamp after a successful update
+		// Log plugin update timestamps after a successful update
 		add_action( 'automatic_updates_complete', array( $this, 'log_plugin_updates' ) );
-
-		// Temporary change of updated plugin array keys
-		// Remove tomorrow
-		add_action( 'wp_maybe_auto_update', function(){
-
-			// Get plugins
-			$plugins = get_plugins();
-
-			// Get transient
-			$transient = get_site_transient('agrilife_auto_updater_true');
-
-			foreach ($plugins as $main_file => $plugin) {
-
-				$slug = $plugin['TextDomain'];
-				$name = $plugin['name'];
-				$pattern = '/\((Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday) (\d+)(st|nd|rd|th) of([^\)]+)\)/i';
-				$replace = '$2$4';
-
-				if(array_key_exists($slug, $transient)){
-
-					// Set aside value
-					$value = $transient[$slug];
-					// Reverse value value back to milliseconds for sorting
-					if(gettype($value) !== 'integer'){
-						$value = preg_replace($pattern, $replace, $value);
-						$value = strtotime($value);
-					}
-					// Unset old keyed values
-					unset($transient[$slug]);
-					// Set new keyed value
-					$transient[$name] = $value;
-
-				}
-
-			}
-
-			arsort($transient);
-
-			set_site_transient( 'agrilife_auto_updater_true', $transient );
-
-		});
 
 	}
 
@@ -145,7 +112,7 @@ class Agrilife_AutoLoad {
 
 			$item = $plugin->item;
 
-			if( property_exists($item, 'plugin') && $plugin->result){
+			if( property_exists($item, 'plugin') && $plugin->result ){
 
 				// This is a plugin and it was updated
 				$this->set_plugin_update_time( 'agrilife_auto_updater_true', $plugin );
@@ -167,10 +134,19 @@ class Agrilife_AutoLoad {
 		// As plugins update, rename the array key to a name value
 		$item = $plugin->item;
 		$name = $plugin->name;
+		if(empty($name)){
+			$name = 'empty name or of type ' . gettype($plugin->name);
+		}
 
-		$transient[ $name ] = date('l jS \of F Y h:i:s A');
+		$transient[ $name ] = time();
 
 		set_site_transient($transient_name, $transient);
+
+		// Troubleshoot plugin data
+		$tr = get_site_transient('agrilife_auto_updater_plugins');
+		$tr[] = date('l jS \of F Y h:i:s A');
+		$tr[] = $plugin;
+		set_site_transient('agrilife_auto_updater_plugins', $tr);
 
 	}
 

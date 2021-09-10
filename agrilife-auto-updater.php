@@ -91,7 +91,8 @@ class Agrilife_AutoLoad {
 			'wp-google-maps',
 			'wp-google-maps-gold',
 			'wp-google-maps-pro',
-			'google-maps-builder'
+			'google-maps-builder',
+			'google-analytics-for-wordpress'
 		);
 
 		if ( in_array( $item->slug, $plugins ) ) {

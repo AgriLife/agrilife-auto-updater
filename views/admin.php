@@ -58,7 +58,8 @@
 				'WP Google Maps',
 				'WP Google Maps - Gold Add-on',
 				'WP Google Maps - Pro Add-on',
-				'Google Maps Builder'
+				'Google Maps Builder',
+				'Google Analytics for WordPress'
 			);
 			foreach ($agau_plugins as $plugin) {
 				echo '<li>' . $plugin . '</li>';

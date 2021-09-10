@@ -22,4 +22,5 @@ All plugins not on the following list will be automatically updated:
 13. wp-google-maps-gold
 14. wp-google-maps-pro
 15. google-maps-builder
+16. google-analytics-for-wordpress (by Monster Insights)
 
